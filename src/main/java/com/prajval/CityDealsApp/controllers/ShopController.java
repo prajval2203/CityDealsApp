@@ -1,7 +1,6 @@
 package com.prajval.CityDealsApp.controllers;
 
 import com.prajval.CityDealsApp.dtos.ShopDto;
-import com.prajval.CityDealsApp.enities.Shop;
 import com.prajval.CityDealsApp.services.ShopService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
