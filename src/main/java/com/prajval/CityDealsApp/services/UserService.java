@@ -6,4 +6,6 @@ import com.prajval.CityDealsApp.dtos.UserDto;
 
 public interface UserService {
      UserDto signUp(SignupDto signupDto);
+
+     void deleteUserById(Long userId);
 }

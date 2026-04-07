@@ -16,15 +16,9 @@ import java.util.Set;
 public class UserDto {
 
     private Long id;
-    @NotBlank(message = "Name is Mandatory" )
     private String name;
-    @NotBlank(message = "Email is Mandatory")
     private String email;
-    @NotBlank(message = "Password is Mandatory")
-    private String password;
-    @NotNull
-    private City city;
-    @NotNull
-    private Set<Role> role;
+    private String cityName;
+    private Role role;
 
 }

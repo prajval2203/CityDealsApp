@@ -9,5 +9,8 @@ public enum Permissions {
     USER_VIEW,
 
     USER_DELETE,
-    SHOP_DELETE
+    SHOP_DELETE,
+    SHOP_APPROVE,
+    SHOP_DEACTIVATE,
+
 }

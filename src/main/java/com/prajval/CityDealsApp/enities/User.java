@@ -25,31 +25,30 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, length = 50)
+    @Column(length = 50)
     private String name;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne
+    @JoinColumn(name = "city_id")
     private City city;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<Role> role;
+    private Role role;
 
+    @Column(nullable = false)
+    private boolean enabled = true;
+    private boolean deleted = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 
-        role.forEach(
-            rol -> {
-                Set<SimpleGrantedAuthority> permissions = PermissionMapping.getAuthoritiesForRole(rol);
-                authorities.addAll(permissions);
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.name()));
-            }
-        );
+                authorities.addAll(PermissionMapping.getAuthoritiesForRole(role));
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
         return authorities;
     }
 

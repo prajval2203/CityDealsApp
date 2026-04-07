@@ -9,10 +9,10 @@ import com.prajval.CityDealsApp.services.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
 @Service
@@ -33,6 +33,10 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public ShopDto createNewShop(ShopDto shopDto) {
+
+        if (shopRepository.existsByNameAndCity(shopDto.getName(), shopDto.getCityName())){
+            throw new IllegalArgumentException("Shop already existed with name: " +shopDto.getName() + " and city: " + shopDto.getCityName());
+        }
 
         Shop newShop = modelMapper.map(shopDto, Shop.class);
         Shop savedShop = shopRepository.save(newShop);
