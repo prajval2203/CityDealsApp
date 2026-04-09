@@ -1,6 +1,5 @@
 package com.prajval.CityDealsApp.dtos;
 
-import com.prajval.CityDealsApp.enities.City;
 import com.prajval.CityDealsApp.enities.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +26,7 @@ public class SignupDto {
             message = "Password must be at least 8 characters long, include one uppercase letter, one number, and one special character"
     )
     private String password;
-    private String cityName;
+    private String city;
+    private String state;
 
 }

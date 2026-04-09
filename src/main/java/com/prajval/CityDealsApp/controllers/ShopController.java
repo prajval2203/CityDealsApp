@@ -1,6 +1,7 @@
 package com.prajval.CityDealsApp.controllers;
 
 import com.prajval.CityDealsApp.dtos.ShopDto;
+import com.prajval.CityDealsApp.dtos.ShopRequestDto;
 import com.prajval.CityDealsApp.services.ShopService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -26,7 +27,7 @@ public class ShopController {
     }
 
     @PostMapping
-    public ResponseEntity<ShopDto> createShop(@Valid @RequestBody ShopDto shopDto){
+    public ResponseEntity<ShopDto> createShop(@Valid @RequestBody ShopRequestDto shopDto){
         return ResponseEntity.ok(shopService.createNewShop(shopDto));
     }
 

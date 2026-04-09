@@ -32,15 +32,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "city_id")
     private City city;
+
+    private String state;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true;
+    @Builder.Default
     private boolean deleted = false;
 
     @Override
@@ -60,5 +64,21 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }

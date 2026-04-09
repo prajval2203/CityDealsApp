@@ -2,21 +2,23 @@ package com.prajval.CityDealsApp.dtos;
 
 import com.prajval.CityDealsApp.enities.enums.ShopStatus;
 import com.prajval.CityDealsApp.enities.enums.ShopType;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class ShopDto {
+public class ShopRequestDto {
 
-    private Long id;
+    @NotNull(message = "City is mandatory")
+    private Long cityId;
     private String name;
     private CityDto city;
     private String state;
     private ShopType shopType;
     private boolean deleted;
     private ShopStatus shopStatus;
-    private UserDto shopOwner;
+    private String shopOwner;
 }

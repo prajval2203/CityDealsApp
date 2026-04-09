@@ -3,8 +3,7 @@ package com.prajval.CityDealsApp.dtos;
 import lombok.Data;
 
 @Data
-public class CityDto {
-    private Long cityId;
+public class CityRequestDto {
     private String city;
     private String state;
 }

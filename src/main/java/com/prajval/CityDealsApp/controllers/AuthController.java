@@ -23,13 +23,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    private ResponseEntity<UserDto> signUp(@Valid @RequestBody SignupDto signupDto){
+    public ResponseEntity<UserDto> signUp(@Valid @RequestBody SignupDto signupDto){
 
         return ResponseEntity.ok(userService.signUp(signupDto));
     }
 
     @PostMapping("/login")
-    private ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto,
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto,
                                                    HttpServletRequest request, HttpServletResponse response){
 
         LoginResponseDto loginResponseDto = authService.login(loginDto);
@@ -43,7 +43,7 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    private void deleteUser(@PathVariable Long userId){
+    public void deleteUser(@PathVariable Long userId){
         userService.deleteUserById(userId);
     }
 }

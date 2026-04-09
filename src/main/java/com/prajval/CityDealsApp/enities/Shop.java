@@ -1,16 +1,15 @@
 package com.prajval.CityDealsApp.enities;
 
+import com.prajval.CityDealsApp.enities.enums.ShopStatus;
 import com.prajval.CityDealsApp.enities.enums.ShopType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@Table
+@Builder
+@Table(name = "shops")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Shop {
@@ -20,11 +19,16 @@ public class Shop {
     private Long id;
 
     private String name;
-    private String city;
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    private City city;
     private String state;
-    private boolean approved = false;
-    private boolean isActive = true;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private ShopStatus shopStatus = ShopStatus.PENDING;
+    private boolean deleted = false;
 
+    @Enumerated(EnumType.STRING)
     private ShopType shopType;
 
     @ManyToOne

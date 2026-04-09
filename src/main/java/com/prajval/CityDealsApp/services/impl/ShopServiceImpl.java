@@ -1,10 +1,16 @@
 package com.prajval.CityDealsApp.services.impl;
 
 import com.prajval.CityDealsApp.dtos.ShopDto;
+import com.prajval.CityDealsApp.dtos.ShopRequestDto;
+import com.prajval.CityDealsApp.enities.City;
 import com.prajval.CityDealsApp.enities.Shop;
+import com.prajval.CityDealsApp.enities.enums.Role;
+import com.prajval.CityDealsApp.enities.enums.ShopStatus;
 import com.prajval.CityDealsApp.enities.enums.ShopType;
 import com.prajval.CityDealsApp.exceptions.ResourceNotFoundException;
+import com.prajval.CityDealsApp.repositories.CityRepository;
 import com.prajval.CityDealsApp.repositories.ShopRepository;
+import com.prajval.CityDealsApp.repositories.UserRepository;
 import com.prajval.CityDealsApp.services.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,6 +26,8 @@ public class ShopServiceImpl implements ShopService {
 
     private final ShopRepository shopRepository;
     private final ModelMapper modelMapper;
+    private final CityRepository cityRepository;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -32,15 +40,27 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ShopDto createNewShop(ShopDto shopDto) {
+    public ShopDto createNewShop(ShopRequestDto shopRequestDto) {
 
-        if (shopRepository.existsByNameAndCity(shopDto.getName(), shopDto.getCityName())){
-            throw new IllegalArgumentException("Shop already existed with name: " +shopDto.getName() + " and city: " + shopDto.getCityName());
+        City city = cityRepository.findById(shopRequestDto.getCityId())
+                .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + shopRequestDto.getCityId()));
+
+        if (shopRepository.existsByNameAndCity(shopRequestDto.getName(), city)) {
+            throw new RuntimeException("Shop already exists with name: "
+                    + shopRequestDto.getName() + " in city: " + city.getCity());
         }
 
-        Shop newShop = modelMapper.map(shopDto, Shop.class);
-        Shop savedShop = shopRepository.save(newShop);
+        Shop newShop = Shop.builder()
+                .name(shopRequestDto.getName())
+                .city(city)
+                .shopType(shopRequestDto.getShopType())
+                .shopStatus(ShopStatus.PENDING)
+                .shopOwner(userRepository.findByRole(Role.SHOP_OWNER))
+                .state(shopRequestDto.getState())
+                .deleted(false)
+                .build();
 
+        Shop savedShop = shopRepository.save(newShop);
         return modelMapper.map(savedShop, ShopDto.class);
     }
 
@@ -64,9 +84,13 @@ public class ShopServiceImpl implements ShopService {
             switch (key){
                 case "name" : shop.setName((String) value);
                 break;
-                case "shopType" : shop.setShopType((ShopType) value);
+                case "shopType" : shop.setShopType(ShopType.valueOf((String) value));
                     break;
-                case "city" : shop.setCity((String) value);
+                case "cityId":
+                    Long cityId = Long.valueOf(value.toString());
+                    City city = cityRepository.findById(cityId)
+                            .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + cityId));
+                    shop.setCity(city);
                     break;
             }
         });
