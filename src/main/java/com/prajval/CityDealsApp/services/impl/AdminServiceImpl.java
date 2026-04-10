@@ -10,6 +10,7 @@ import com.prajval.CityDealsApp.exceptions.ResourceNotFoundException;
 import com.prajval.CityDealsApp.repositories.ShopRepository;
 import com.prajval.CityDealsApp.repositories.UserRepository;
 import com.prajval.CityDealsApp.services.AdminService;
+import com.prajval.CityDealsApp.services.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,11 @@ public class AdminServiceImpl implements AdminService {
     private final ShopRepository shopRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
-    public List<ShopDto> getAllShops(ShopStatus shopStatus) {
-
+    public List<ShopDto> getAllShopsWithFilter(ShopStatus shopStatus) {
         List<Shop> shops;
-
         if (shopStatus != null) {
             shops = shopRepository.findByShopStatusAndDeletedFalse(shopStatus);
         } else {
@@ -49,7 +49,6 @@ public class AdminServiceImpl implements AdminService {
             throw new RuntimeException("Shop is already approved");
 
         shop.setShopStatus(ShopStatus.APPROVED);
-
         Shop savedShop = shopRepository.save(shop);
         return modelMapper.map(savedShop, ShopDto.class);
     }
@@ -63,14 +62,12 @@ public class AdminServiceImpl implements AdminService {
             throw new RuntimeException("Shop is already Deactivated");
 
         shop.setShopStatus(ShopStatus.DEACTIVATED);
-
         Shop savedShop = shopRepository.save(shop);
         return modelMapper.map(savedShop, ShopDto.class);
     }
 
     @Override
     public Void deleteShopById(Long shopId) {
-
         Shop shop = shopRepository
                 .findByIdAndDeletedFalse(shopId)
                 .orElseThrow(()-> new ResourceNotFoundException("Shop not found with id: " + shopId));
@@ -89,7 +86,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Void disableUserById(Long userId) {
-
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + userId));
@@ -99,14 +95,14 @@ public class AdminServiceImpl implements AdminService {
         }
         user.setEnabled(false);
         userRepository.save(user);
+        refreshTokenService.deleteRefreshToken(user);
         return null;
     }
     @Override
     public Void enableUserById(Long userId) {
-
         User user = userRepository
                 .findById(userId)
-                .orElseThrow(()-> new RuntimeException("Shop not found with id: " + userId));
+                .orElseThrow(()-> new RuntimeException("User not found with id: " + userId));
 
         if (user.isEnabled()) {
             throw new RuntimeException("User is already enabled");
@@ -115,5 +111,4 @@ public class AdminServiceImpl implements AdminService {
         userRepository.save(user);
         return null;
     }
-
 }

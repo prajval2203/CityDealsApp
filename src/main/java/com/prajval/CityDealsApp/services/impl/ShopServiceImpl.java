@@ -4,7 +4,7 @@ import com.prajval.CityDealsApp.dtos.ShopDto;
 import com.prajval.CityDealsApp.dtos.ShopRequestDto;
 import com.prajval.CityDealsApp.enities.City;
 import com.prajval.CityDealsApp.enities.Shop;
-import com.prajval.CityDealsApp.enities.enums.Role;
+import com.prajval.CityDealsApp.enities.User;
 import com.prajval.CityDealsApp.enities.enums.ShopStatus;
 import com.prajval.CityDealsApp.enities.enums.ShopType;
 import com.prajval.CityDealsApp.exceptions.ResourceNotFoundException;
@@ -14,10 +14,9 @@ import com.prajval.CityDealsApp.repositories.UserRepository;
 import com.prajval.CityDealsApp.services.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -31,15 +30,6 @@ public class ShopServiceImpl implements ShopService {
 
 
     @Override
-    public List<ShopDto> getAllShops(ShopDto shopDto) {
-        return shopRepository
-                .findAll()
-                .stream()
-                .map((element) -> modelMapper.map(element, ShopDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public ShopDto createNewShop(ShopRequestDto shopRequestDto) {
 
         City city = cityRepository.findById(shopRequestDto.getCityId())
@@ -50,12 +40,14 @@ public class ShopServiceImpl implements ShopService {
                     + shopRequestDto.getName() + " in city: " + city.getCity());
         }
 
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Shop newShop = Shop.builder()
                 .name(shopRequestDto.getName())
                 .city(city)
                 .shopType(shopRequestDto.getShopType())
                 .shopStatus(ShopStatus.PENDING)
-                .shopOwner(userRepository.findByRole(Role.SHOP_OWNER))
+                .shopOwner(currentUser)
                 .state(shopRequestDto.getState())
                 .deleted(false)
                 .build();
@@ -69,7 +61,6 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository
                 .findById(shopId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shop not found with id: " +shopId));
-
         return modelMapper.map(shop, ShopDto.class);
     }
 
@@ -94,7 +85,6 @@ public class ShopServiceImpl implements ShopService {
                     break;
             }
         });
-
         Shop updatedShop = shopRepository.save(shop);
         return modelMapper.map(updatedShop, ShopDto.class);
     }

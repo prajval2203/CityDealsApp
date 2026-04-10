@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<ShopDto> getAllShops(ShopStatus shopStatus);
-
     ShopDto approveShop(Long shopId);
 
     ShopDto deactivateShop(Long shopId);
@@ -20,4 +18,6 @@ public interface AdminService {
     Void disableUserById(Long userId);
 
     Void enableUserById(Long userId);
+
+    List<ShopDto> getAllShopsWithFilter(ShopStatus shopStatus);
 }

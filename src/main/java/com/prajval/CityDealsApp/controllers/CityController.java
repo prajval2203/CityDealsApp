@@ -17,22 +17,21 @@ public class CityController {
 
     private final CityService cityService;
 
-    @PostMapping("/admin/cities")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/cities")
     public ResponseEntity<CityDto> createNewCity(@RequestBody CityRequestDto newCity){
 
         return ResponseEntity.ok(cityService.createNewCity(newCity));
     }
 
-    @GetMapping("/cities")
-    public ResponseEntity<List<CityDto>> getAllCities(){
-        return ResponseEntity.ok(cityService.getAllCities());
-    }
-
-    @DeleteMapping("/admin/cities/{city}")
     @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/cities/{city}")
     public ResponseEntity<Void> deleteCityByName(@PathVariable String city){
         cityService.deleteCityByName(city);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/cities")
+    public ResponseEntity<List<CityDto>> getAllCities(){
+        return ResponseEntity.ok(cityService.getAllCities());
     }
 }

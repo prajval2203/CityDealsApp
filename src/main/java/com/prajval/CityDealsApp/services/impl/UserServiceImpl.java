@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository
@@ -33,12 +32,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
     }
 
-
     @Override
     public UserDto signUp(SignupDto signupDto) {
 
         Optional<User> user = userRepository.findByEmail(signupDto.getEmail());
-
         if (user.isPresent()){
             throw new BadCredentialsException("User with this " + signupDto.getEmail() + "already exists");
         }
@@ -48,12 +45,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User savedUser = userRepository.save(newUser);
         return modelMapper.map(savedUser, UserDto.class);
     }
-
     @Override
-    public void deleteUserById(Long userId) {
+    public Void deleteUserById(Long userId) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow();
+        user.setDeleted(true);
         userRepository.deleteById(userId);
+        return null;
+    }
+
+    @Override
+    public User getUserById(Long userId){
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 }

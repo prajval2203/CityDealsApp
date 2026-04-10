@@ -9,9 +9,7 @@ import com.prajval.CityDealsApp.services.CityService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,18 +19,16 @@ public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final ModelMapper modelMapper;
 
-
     @Override
     public CityDto createNewCity(CityRequestDto newCity) {
 
-        Optional<City> existingCity = cityRepository.findByCity(newCity.getCity());
+        boolean existingCity = cityRepository.existsByCity(newCity.getCity());
 
-        if (existingCity.isPresent()){
+        if (existingCity){
             throw new RuntimeException("City already existed with name: " +newCity.getCity());
         }
         City city = modelMapper.map(newCity, City.class);
         City savedCIty = cityRepository.save(city);
-
         return modelMapper.map(savedCIty, CityDto.class);
     }
 
@@ -47,10 +43,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public void deleteCityByName(String city) {
-
         City city1 = cityRepository
                 .findByCity(city)
-                .orElseThrow(() ->new ResourceNotFoundException("City not sound with name: " + city));
+                .orElseThrow(() ->new ResourceNotFoundException("City not found with name: " + city));
         cityRepository.delete(city1);
     }
 }

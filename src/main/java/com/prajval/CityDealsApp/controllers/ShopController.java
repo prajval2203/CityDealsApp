@@ -7,33 +7,23 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/shop")
+@RequestMapping("/api/shops")
+@PreAuthorize("hasRole('SHOP_OWNER')")
 @RequiredArgsConstructor
 @Validated
 public class ShopController {
 
     private final ShopService shopService;
 
-    @GetMapping("/shops")
-    public List<ShopDto> getAllShops(ShopDto shopDto){
-        return shopService.getAllShops(shopDto);
-    }
-
     @PostMapping
     public ResponseEntity<ShopDto> createShop(@Valid @RequestBody ShopRequestDto shopDto){
         return ResponseEntity.ok(shopService.createNewShop(shopDto));
-    }
-
-    @GetMapping("/{shopId}")
-    public ShopDto getShopById(@PathVariable @Min(1) Long shopId){
-        return shopService.getShopById(shopId);
     }
 
     @PatchMapping("/{shopId}")

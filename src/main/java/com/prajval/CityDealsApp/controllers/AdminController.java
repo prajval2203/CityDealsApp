@@ -4,6 +4,7 @@ import com.prajval.CityDealsApp.dtos.ShopDto;
 import com.prajval.CityDealsApp.dtos.UserDto;
 import com.prajval.CityDealsApp.enities.enums.ShopStatus;
 import com.prajval.CityDealsApp.services.AdminService;
+import com.prajval.CityDealsApp.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,12 +19,7 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
-
-    @GetMapping("/shops")
-    public ResponseEntity<List<ShopDto>> getAllShops(@RequestParam(required = false) ShopStatus shopStatus){
-
-        return ResponseEntity.ok(adminService.getAllShops(shopStatus));
-    }
+    private final UserService userService;
 
     @PutMapping("/shops/{shopId}/approve")
     public ResponseEntity<ShopDto> approveShop(@PathVariable Long shopId){
@@ -39,7 +35,8 @@ public class AdminController {
 
     @DeleteMapping("/shops/{shopId}")
     public ResponseEntity<Void> deleteShopById(@PathVariable Long shopId){
-        return ResponseEntity.ok(adminService.deleteShopById(shopId));
+        adminService.deleteShopById(shopId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/users")
@@ -57,5 +54,16 @@ public class AdminController {
     public ResponseEntity<Void> enableUser(@PathVariable Long userId){
         adminService.enableUserById(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.deleteUserById(userId));
+    }
+
+    @GetMapping("/shops")
+    public ResponseEntity<List<ShopDto>> getAllShops(
+            @RequestParam(required = false) ShopStatus shopStatus) {
+        return ResponseEntity.ok(adminService.getAllShopsWithFilter(shopStatus));
     }
 }
