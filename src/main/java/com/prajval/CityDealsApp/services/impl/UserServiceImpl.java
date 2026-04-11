@@ -4,6 +4,7 @@ import com.prajval.CityDealsApp.dtos.SignupDto;
 import com.prajval.CityDealsApp.dtos.UserDto;
 import com.prajval.CityDealsApp.enities.User;
 import com.prajval.CityDealsApp.exceptions.ResourceNotFoundException;
+import com.prajval.CityDealsApp.repositories.RefreshTokenRepository;
 import com.prajval.CityDealsApp.repositories.UserRepository;
 import com.prajval.CityDealsApp.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,8 +51,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public Void deleteUserById(Long userId) {
         User user = userRepository
                 .findById(userId)
-                .orElseThrow();
+                .orElseThrow(()-> new ResourceNotFoundException("User not found with id" + userId));
         user.setDeleted(true);
+        refreshTokenRepository.deleteRefreshTokenByUser(user);
         userRepository.deleteById(userId);
         return null;
     }

@@ -21,7 +21,6 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     public LoginResponseDto login(LoginDto loginDto) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
@@ -32,29 +31,16 @@ public class AuthService {
         refreshTokenService.createRefreshToken(user, refreshToken);
         return new LoginResponseDto(user.getId(), accessToken, refreshToken);
     }
-//    public String refreshTokenAccess(String refreshToken){
-//        RefreshTokenEntity refreshTokenEntity = refreshTokenService.verifyRefreshToken(refreshToken);
-//
-//        User user = refreshTokenEntity.getUser();
-//        return jwtService.generateAccessToken(user);
-//    }
-
-    public void logout(String refreshToken){
-
-        RefreshTokenEntity refreshTokenEntity = refreshTokenService.verifyRefreshToken(refreshToken);
-
-        User user = refreshTokenEntity.getUser();
-        refreshTokenService.deleteRefreshToken(user);
-    }
 
     public LoginResponseDto refreshToken(String refreshToken) {
-
-        String userEmail = jwtService.getEmailFromToken(refreshToken);
-        refreshTokenService.verifyRefreshToken(refreshToken);
-
-        User user = (User) userService.loadUserByUsername(userEmail);
-
+        RefreshTokenEntity entity = refreshTokenService.verifyRefreshToken(refreshToken);
+        User user = entity.getUser();
         String accessToken = jwtService.generateAccessToken(user);
         return new LoginResponseDto(user.getId(), accessToken, refreshToken);
+    }
+
+    public void logout(String refreshToken) {
+        RefreshTokenEntity entity = refreshTokenService.verifyRefreshToken(refreshToken);
+        refreshTokenService.deleteRefreshToken(entity.getUser());
     }
 }

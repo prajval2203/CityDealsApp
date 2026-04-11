@@ -30,7 +30,7 @@ public class CityController {
         cityService.deleteCityByName(city);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/cities")
+    @GetMapping("/auth/cities")
     public ResponseEntity<List<CityDto>> getAllCities(){
         return ResponseEntity.ok(cityService.getAllCities());
     }

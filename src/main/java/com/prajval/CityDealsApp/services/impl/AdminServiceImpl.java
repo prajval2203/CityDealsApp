@@ -95,7 +95,6 @@ public class AdminServiceImpl implements AdminService {
         }
         user.setEnabled(false);
         userRepository.save(user);
-        refreshTokenService.deleteRefreshToken(user);
         return null;
     }
     @Override

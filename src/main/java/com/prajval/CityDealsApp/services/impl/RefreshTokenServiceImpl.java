@@ -8,7 +8,6 @@ import com.prajval.CityDealsApp.services.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,12 +18,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenEntity createRefreshToken(User user, String token) {
 
-        Optional<RefreshTokenEntity> tokenExists = refreshTokenRepository
-                .findByToken(token);
+        refreshTokenRepository.deleteRefreshTokenByUser(user);
 
-        if (tokenExists.isPresent()){
-            refreshTokenRepository.deleteByUser(user);
-        }
         RefreshTokenEntity entity = RefreshTokenEntity.builder()
                 .token(token)
                 .user(user)
@@ -50,6 +45,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
     @Override
     public void deleteRefreshToken(User user) {
-        refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.deleteRefreshTokenByUser(user);
     }
 }

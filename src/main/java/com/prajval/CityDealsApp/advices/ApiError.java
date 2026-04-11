@@ -15,7 +15,6 @@ public class ApiError {
     public ApiError() {
         this.timeStamp = LocalDateTime.now();
     }
-
     public ApiError(String message, HttpStatusCode httpStatusCode) {
         this();
         this.message = message;

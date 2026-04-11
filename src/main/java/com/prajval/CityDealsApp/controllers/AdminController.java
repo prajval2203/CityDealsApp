@@ -58,7 +58,8 @@ public class AdminController {
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
-        return ResponseEntity.ok(userService.deleteUserById(userId));
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/shops")

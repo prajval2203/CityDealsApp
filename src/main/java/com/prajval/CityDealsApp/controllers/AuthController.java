@@ -6,7 +6,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -32,16 +31,24 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto,
-                                                  HttpServletRequest request,
                                                   HttpServletResponse response) {
 
-        LoginResponseDto loginResponseDto = authService.login(loginDto);
+        LoginResponseDto dto = authService.login(loginDto);
 
-        Cookie cookie = new Cookie("refreshToken", loginResponseDto.getRefreshToken());
+        Cookie clearCookie = new Cookie("refreshToken", null);
+        clearCookie.setHttpOnly(true);
+        clearCookie.setSecure(true);
+        clearCookie.setPath("/");
+        clearCookie.setMaxAge(0);
+        response.addCookie(clearCookie);
+
+        Cookie cookie = new Cookie("refreshToken", dto.getRefreshToken());
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
+        cookie.setPath("/");
         response.addCookie(cookie);
-        return ResponseEntity.ok(loginResponseDto);
+
+        return ResponseEntity.ok(dto);
     }
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponseDto> refresh(HttpServletRequest request) {
@@ -57,13 +64,24 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto) {
-        authService.logout(refreshTokenRequestDto.getRefreshToken());
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+
+        String refreshToken = Arrays.stream(request.getCookies())
+                .filter(c -> "refreshToken".equals(c.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElseThrow(() -> new AuthenticationServiceException("Refresh token not found in cookie"));
+
+        authService.logout(refreshToken);
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/shops")
-    public ShopDto getShopById(@PathVariable @Min(1) Long shopId){
-        return shopService.getShopById(shopId);
-    }
 }

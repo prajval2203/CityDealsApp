@@ -17,10 +17,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> apiError(ResourceNotFoundException exception){
 
         ApiError apiError = new ApiError(exception.getLocalizedMessage(), HttpStatus.NOT_FOUND);
-
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex){
         Map<String, String> errors = new HashMap<>();

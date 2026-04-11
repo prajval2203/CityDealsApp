@@ -8,4 +8,5 @@ public interface RefreshTokenService {
     RefreshTokenEntity createRefreshToken(User user, String token);
     RefreshTokenEntity verifyRefreshToken(String token);
     void deleteRefreshToken(User user);
+
 }

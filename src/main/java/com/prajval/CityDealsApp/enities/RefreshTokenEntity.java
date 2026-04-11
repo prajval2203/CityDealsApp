@@ -2,7 +2,6 @@ package com.prajval.CityDealsApp.enities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +20,7 @@ public class RefreshTokenEntity {
     @Column(nullable = false, unique = true, length = 1000)
     private String token;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

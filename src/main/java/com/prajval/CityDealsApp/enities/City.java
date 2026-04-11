@@ -1,15 +1,13 @@
 package com.prajval.CityDealsApp.enities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@Table
+@Data
+@Table(name = "cities")
 @AllArgsConstructor
 @NoArgsConstructor
 public class City {

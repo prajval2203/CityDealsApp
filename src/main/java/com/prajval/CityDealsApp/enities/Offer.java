@@ -26,14 +26,12 @@ public class Offer {
 
     private String title;
     private String description;
-
     private double discountPercentage;
 
     @CreationTimestamp
     private LocalDate startDate;
     @UpdateTimestamp
     private LocalDate endDate;
-
     private boolean isActive = true;
 
     @ManyToOne
