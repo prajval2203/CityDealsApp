@@ -64,4 +64,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+
+        return userRepository
+                .findByEmail(email)
+                .orElse(null);
+    }
+
+    @Override
+    public User save(User newUser) {
+        return userRepository.save(newUser);
+    }
+
+
 }

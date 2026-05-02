@@ -11,4 +11,8 @@ public interface UserService {
      Void deleteUserById(Long userId);
 
      User getUserById(Long userId);
+
+    User getUserByEmail(String email);
+
+    User save(User newUser);
 }

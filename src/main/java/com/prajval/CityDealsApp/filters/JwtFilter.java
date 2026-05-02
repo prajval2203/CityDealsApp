@@ -1,7 +1,7 @@
 package com.prajval.CityDealsApp.filters;
 
 import com.prajval.CityDealsApp.enities.User;
-import com.prajval.CityDealsApp.services.JwtService;
+import com.prajval.CityDealsApp.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

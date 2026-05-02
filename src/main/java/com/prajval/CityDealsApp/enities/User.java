@@ -28,7 +28,7 @@ public class User implements UserDetails {
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -1,4 +1,4 @@
-package com.prajval.CityDealsApp.services;
+package com.prajval.CityDealsApp.security;
 
 import com.prajval.CityDealsApp.enities.User;
 import io.jsonwebtoken.Jwts;
